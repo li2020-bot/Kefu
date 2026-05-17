@@ -1,0 +1,29 @@
+name: after_sales
+display_name: "售后服务"
+description: "订单查询、物流跟踪、修改订单、发票开具"
+trigger_intents:
+  - order_status
+  - logistics_query
+  - modify_order
+
+tools:
+  - mcp_server: order
+    tools: [query_order, list_customer_orders]
+  - mcp_server: crm
+    tools: [lookup_customer]
+
+knowledge_bases:
+  - namespace: shipping_faq
+    weight: 0.5
+  - namespace: order_policy
+    weight: 0.3
+  - namespace: invoice_policy
+    weight: 0.2
+
+prompt_file: system_prompt.md
+sop_file: sop.md
+
+escalation:
+  trigger_keywords: [manager, supervisor, complaint, 投诉, 经理]
+  unsatisfied_count: 3
+  timeout_minutes: 30

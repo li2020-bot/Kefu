@@ -1,0 +1,134 @@
+[
+  {
+    "scene": "售前-库存议价",
+    "intent": "product_inquiry",
+    "skill": "pre_sales",
+    "messages": [
+      {"role": "user", "content": "这款有现货吗？能便宜点吗？"},
+      {"role": "assistant", "content": "亲，您看中的这款宝贝是有现货的呢，拍下后48小时内发出～关于价格，我们的定价已经是最优销售价了，不过这款是热销爆款，质量有保证、性价比很高，买过的顾客反馈都很好哦！"},
+      {"role": "user", "content": "那我拍两件能包邮吗？"},
+      {"role": "assistant", "content": "亲，现在店铺正好有"满两件包邮"的活动，任意两件即可包邮！您选好后用购物车一起拍下，我这边帮您改运费～"}
+    ]
+  },
+  {
+    "scene": "售前-功能对比",
+    "intent": "product_inquiry",
+    "skill": "pre_sales",
+    "messages": [
+      {"role": "user", "content": "A款和B款有什么区别？我是干性皮肤，哪个更适合？"},
+      {"role": "assistant", "content": "亲，A款主打补水保湿，含有玻尿酸成分，质地清爽，适合中干性皮肤；B款主打修护屏障，含神经酰胺，质地滋润，更适合敏感肌。根据您是干性皮肤，我推荐A款哦～补水效果特别好。"},
+      {"role": "user", "content": "那A款现在有什么活动吗？"},
+      {"role": "assistant", "content": "目前A款参与店庆活动，买1件享9折，买2件享8折+赠面膜2片！活动到本周末截止，建议趁优惠入手～"}
+    ]
+  },
+  {
+    "scene": "售前-促销规则",
+    "intent": "pricing_inquiry",
+    "skill": "pre_sales",
+    "messages": [
+      {"role": "user", "content": "满300减50和优惠券能叠加用吗？"},
+      {"role": "assistant", "content": "亲，满减和优惠券是可以叠加使用的哦～比如您购物车金额是350元，享受满300减50后是300元，如果还有优惠券可以继续抵扣。不过要注意，部分限时特价款不参与满减活动。"},
+      {"role": "user", "content": "那我怎么知道哪些款不参与？"},
+      {"role": "assistant", "content": "商品详情页有活动标识的就可以参与哦～没有标识的就是特价款或已优惠到底价的商品。您也可以把心仪的款式发给我，我帮您一一确认！"}
+    ]
+  },
+  {
+    "scene": "售中-物流查询",
+    "intent": "logistics_query",
+    "skill": "after_sales",
+    "messages": [
+      {"role": "user", "content": "我的快递怎么3天了还没更新物流？"},
+      {"role": "assistant", "content": "亲，非常抱歉让您久等了！我马上帮您查询。（查询后）您订单的物流目前显示在广州中转站，因为近期大促物流量大，中转站分拣稍有延迟，预计明后天会更新并送达，我帮您标记加急跟进，有异常第一时间通知您。"},
+      {"role": "user", "content": "好吧，希望能快点到。"},
+      {"role": "assistant", "content": "完全理解您的心情！我再帮您催一下快递公司，有新进展立刻同步您。给您添麻烦了，抱歉～"}
+    ]
+  },
+  {
+    "scene": "售中-修改地址",
+    "intent": "modify_order",
+    "skill": "after_sales",
+    "messages": [
+      {"role": "user", "content": "我刚下的单能改收货地址吗？填错了"},
+      {"role": "assistant", "content": "亲，我帮您看一下订单状态。（查询后）您的订单还未发货，可以修改地址！请您把新的收货地址信息发我：收件人+手机号+省市区+详细地址～"},
+      {"role": "user", "content": "张三，138xxxx1234，浙江省杭州市西湖区xxx路xxx号"},
+      {"role": "assistant", "content": "好的，已帮您更新地址为：浙江省杭州市西湖区xxx路xxx号，收件人张三，电话138xxxx1234。请核对是否正确？"}
+    ]
+  },
+  {
+    "scene": "售中-发票",
+    "intent": "modify_order",
+    "skill": "after_sales",
+    "messages": [
+      {"role": "user", "content": "我需要开发票，怎么操作？"},
+      {"role": "assistant", "content": "亲，开发票有两种方式：①下单时在"填写订单"页面底部勾选"需要发票"，填写抬头和税号；②已下单忘记勾选，可在"我的订单"中找到订单，点击"补开发票"。电子发票确认收货后3个工作日内发送到邮箱。"},
+      {"role": "user", "content": "我们是公司采购，要开增值税专用发票"},
+      {"role": "assistant", "content": "可以的亲，专票需确认收货后联系客服提供：单位名称、纳税人识别号、注册地址、电话、开户行及账号。专票为纸质版，5个工作日内寄出～"}
+    ]
+  },
+  {
+    "scene": "售后-质量退货",
+    "intent": "return_request",
+    "skill": "return_exchange",
+    "messages": [
+      {"role": "user", "content": "你们发的衣服有个洞！质量太差了"},
+      {"role": "assistant", "content": "亲，非常抱歉！给您带来不好的体验了。麻烦您拍一张有质量问题处的清晰照片发给我，我马上为您核实处理。"},
+      {"role": "user", "content": "（发送照片）"},
+      {"role": "assistant", "content": "收到，确实是我们品控的疏忽，再次向您道歉！您可以选择：①补发：免费重新发一件完好的，这件不用寄回；②退款：全额退款（含您寄回的运费我们承担）。您看哪种方式更方便？"}
+    ]
+  },
+  {
+    "scene": "售后-退款催促",
+    "intent": "refund_inquiry",
+    "skill": "return_exchange",
+    "messages": [
+      {"role": "user", "content": "我退货都签收3天了，怎么还没退款？"},
+      {"role": "assistant", "content": "亲，我帮您查询退货物流和退款进度。（查询后）您的退件已在昨天被仓库签收，目前正在排队等待质检验收，预计今天内完成验收，验收通过后系统会自动发起退款，3个工作日内到账。我帮您标记加急处理，今天下班前给您确认进度，您看可以吗？"},
+      {"role": "user", "content": "好的，麻烦快一点"},
+      {"role": "assistant", "content": "一定优先处理！有进展第一时间通知您。抱歉让您久等了～"}
+    ]
+  },
+  {
+    "scene": "投诉-客服态度",
+    "intent": "complaint",
+    "skill": "complaint",
+    "messages": [
+      {"role": "user", "content": "刚才那个客服态度太差了，我要投诉！"},
+      {"role": "assistant", "content": "非常抱歉给您带来不愉快的体验！我们非常重视您的反馈。能否请您告诉我是刚才沟通的大概时间？我会立即核查聊天记录，情况属实一定给您一个满意的处理结果，同时对相关客服进行培训改进。"},
+      {"role": "user", "content": "就刚刚，大概5分钟前"},
+      {"role": "assistant", "content": "好的，我已记录。为了弥补您的不愉快，我先为您申请一张20元无门槛优惠券。同时我已提交工单（TK-20260514-XXXXX），核查结果会在24小时内反馈给您。再次为此次体验向您道歉。"}
+    ]
+  },
+  {
+    "scene": "账户-密码找回",
+    "intent": "account_issue",
+    "skill": "account_mgmt",
+    "messages": [
+      {"role": "user", "content": "我忘记密码了，怎么登录？"},
+      {"role": "assistant", "content": "您好，请点击登录页面的"忘记密码"，输入您注册时绑定的手机号，获取短信验证码后即可重置新密码。"},
+      {"role": "user", "content": "我收不到验证码怎么办？"},
+      {"role": "assistant", "content": "请检查：①手机号是否与注册时一致；②短信是否被手机管家拦截；③信号是否正常，可尝试重启手机。如果仍收不到，请提供您的注册手机号和姓名，我帮您从后台排查或发送邮件验证码。"}
+    ]
+  },
+  {
+    "scene": "技术-页面故障",
+    "intent": "technical_issue",
+    "skill": "technical_support",
+    "messages": [
+      {"role": "user", "content": "打开页面一直转圈，加载不出来！"},
+      {"role": "assistant", "content": "您好，给您带来不便了。请您配合我排查一下：①刷新页面或换个浏览器试试（推荐Chrome）；②清除浏览器缓存和Cookie后重试；③检查网络是否正常。"},
+      {"role": "user", "content": "都试过了，还是不行"},
+      {"role": "assistant", "content": "了解，我记录一下您的账号和环境信息，这个问题需要技术同事进一步排查。请问您使用的浏览器版本和操作系统是？"},
+      {"role": "user", "content": "Chrome 最新版，Windows 11"},
+      {"role": "assistant", "content": "好的，我已为您创建紧急工单，预计30分钟内技术同事会排查并回复。处理期间您可以先用手机App访问，App端目前运行正常。有进展我会第一时间通知您，请留意消息～"}
+    ]
+  },
+  {
+    "scene": "转人工",
+    "intent": "human_handoff",
+    "skill": null,
+    "messages": [
+      {"role": "user", "content": "你说的都不对，给我转人工客服"},
+      {"role": "assistant", "content": "非常抱歉没能解决您的问题。正在为您转接人工客服，请稍候...\n\n我们已记录您的会话信息：\n- 预计等待时间：2-5分钟\n- 人工客服接入后会看到我们之前的对话记录，无需重复描述。\n\n感谢您的耐心等待！"}
+    ]
+  }
+]

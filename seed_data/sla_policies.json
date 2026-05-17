@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "name": "标准SLA",
+    "description": "适用于一般客户的标准服务等级",
+    "priority_level": 2,
+    "first_response_minutes": 30,
+    "resolution_minutes": 1440,
+    "business_hours_only": true
+  },
+  {
+    "id": 2,
+    "name": "VIP优先SLA",
+    "description": "适用于VIP客户的高优先级服务",
+    "priority_level": 1,
+    "first_response_minutes": 10,
+    "resolution_minutes": 240,
+    "business_hours_only": false
+  },
+  {
+    "id": 3,
+    "name": "紧急SLA",
+    "description": "适用于紧急投诉和安全事件",
+    "priority_level": 4,
+    "first_response_minutes": 5,
+    "resolution_minutes": 60,
+    "business_hours_only": false
+  }
+]

@@ -1,0 +1,27 @@
+name: account_mgmt
+display_name: "账户管理"
+description: "注册登录、密码找回、实名认证、账号安全"
+trigger_intents:
+  - account_issue
+
+tools:
+  - mcp_server: crm
+    tools: [lookup_customer, update_customer_profile]
+  - mcp_server: ticket
+    tools: [create_ticket]
+
+knowledge_bases:
+  - namespace: account_policy
+    weight: 0.5
+  - namespace: security_policy
+    weight: 0.3
+  - namespace: faq_account
+    weight: 0.2
+
+prompt_file: system_prompt.md
+sop_file: sop.md
+
+escalation:
+  trigger_keywords: [被盗, 盗刷, 异常交易, 冻结, 报警]
+  unsatisfied_count: 1
+  timeout_minutes: 15

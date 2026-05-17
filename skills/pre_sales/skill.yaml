@@ -1,0 +1,26 @@
+name: pre_sales
+display_name: "售前咨询"
+description: "产品咨询、价格查询、库存查询、促销活动、功能对比"
+trigger_intents:
+  - product_inquiry
+  - pricing_inquiry
+  - stock_check
+  - general_inquiry
+
+tools:
+  - mcp_server: crm
+    tools: [lookup_customer]
+
+knowledge_bases:
+  - namespace: products
+    weight: 0.7
+  - namespace: marketing_faq
+    weight: 0.3
+
+prompt_file: system_prompt.md
+sop_file: sop.md
+
+escalation:
+  trigger_keywords: [manager, supervisor, complaint, 投诉, 经理, 主管]
+  unsatisfied_count: 2
+  timeout_minutes: 30

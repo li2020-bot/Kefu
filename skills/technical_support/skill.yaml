@@ -1,0 +1,27 @@
+name: technical_support
+display_name: "技术支持"
+description: "功能使用指导、故障排查、Bug反馈、API对接"
+trigger_intents:
+  - technical_issue
+
+tools:
+  - mcp_server: ticket
+    tools: [create_ticket, query_ticket]
+  - mcp_server: crm
+    tools: [lookup_customer]
+
+knowledge_bases:
+  - namespace: technical_docs
+    weight: 0.5
+  - namespace: troubleshooting_guides
+    weight: 0.3
+  - namespace: faq_tech
+    weight: 0.2
+
+prompt_file: system_prompt.md
+sop_file: sop.md
+
+escalation:
+  trigger_keywords: [生产环境, 宕机, 数据丢失, 安全漏洞, 紧急]
+  unsatisfied_count: 2
+  timeout_minutes: 20

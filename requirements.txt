@@ -1,0 +1,61 @@
+# LangChain & LangGraph
+langchain>=1.0.0
+langchain-openai>=1.0.0
+langchain-anthropic>=1.0.0
+langchain-community>=0.4.0
+litellm>=1.50.0
+langgraph>=1.0.0
+langgraph-checkpoint-postgres>=3.0.0
+
+# MCP
+mcp>=1.27.0
+langchain-mcp-adapters>=0.2.0
+
+# FastAPI
+fastapi>=0.115.0
+uvicorn[standard]>=0.34.0
+sse-starlette>=1.8.0
+
+# Database
+psycopg[binary]>=3.2.0
+pgvector>=0.3.0
+asyncpg>=0.30.0
+sqlalchemy[asyncio]>=2.0.0
+alembic>=1.14.0
+
+# Redis
+redis>=5.0.0
+
+# OpenSearch
+opensearch-py>=2.7.0
+
+# Embedding
+sentence-transformers>=3.0.0
+
+# Document parsing
+unstructured>=0.16.0
+python-docx>=1.1.0
+pypdf>=5.0.0
+
+# Security
+presidio-analyzer>=2.2.0
+presidio-anonymizer>=2.2.0
+
+# Observability
+opentelemetry-api>=1.28.0
+opentelemetry-sdk>=1.28.0
+opentelemetry-instrumentation-fastapi>=0.49b0
+opentelemetry-exporter-otlp>=1.28.0
+prometheus-client>=0.21.0
+
+# Utilities
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
+pyyaml>=6.0.0
+structlog>=24.0.0
+httpx>=0.28.0
+python-multipart>=0.0.12
+
+# Testing
+pytest>=8.0.0
+pytest-asyncio>=0.24.0
