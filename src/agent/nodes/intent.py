@@ -25,12 +25,16 @@ _DATA_PATTERNS = [
     r"^(是|对|嗯|好|可以|行|ok|yes|没有|不是|不对|no)$",  # yes/no
 ]
 
-# Patterns indicating the user has a question/request — disqualifies slot-filling
+# Patterns indicating the user has a question/request/intent — disqualifies slot-filling
+# When the user expresses any of these, they are NOT just providing data
 _QUESTION_PATTERNS = [
     r"[?？]",
     r"(?:怎么|如何|为什么|什么|哪里|哪个|多少钱|多久|能不能|可以吗|行吗|对吗)",
     r"(?:帮我|查一下|查查|查一查|看看|找一下|搜一下|问一下|告诉我)",
     r"(?:物流|订单|退款|退货|换货|发货|快递|查询)",
+    # Intent-changing phrases — user is expressing a new need, not filling a slot
+    r"(?:投诉|举报|差评|领导|经理|负责人)",
+    r"(?:转人工|人工客服|真人|找人工|接人工|不要机器人)",
 ]
 
 

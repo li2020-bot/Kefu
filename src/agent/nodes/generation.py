@@ -38,80 +38,41 @@ _tool_schema_map: dict[str, dict] = {}
 _validator_cache: dict[str, type] = {}
 
 # JSON Schema type → Python type
-_JSON_TYPE_MAP = {
-    "string": str,
-    "integer": int,
-    "number": float,
-    "boolean": bool,
-    "object": dict,
-    "array": list,
-}
-
-
-def _json_type_to_python(schema: dict):
-    """Convert a JSON Schema property definition to a Python type."""
-    type_str = schema.get("type")
-    if type_str in _JSON_TYPE_MAP:
-        return _JSON_TYPE_MAP[type_str]
-    # Handle anyOf (e.g., {"anyOf": [{"type": "number"}, {"type": "null"}]})
-    if "anyOf" in schema:
-        for sub in schema["anyOf"]:
-            t = sub.get("type")
-            if t and t != "null" and t in _JSON_TYPE_MAP:
-                return _JSON_TYPE_MAP[t]
-    return str  # fallback
-
-
-def _build_validator(tool_name: str, schema: dict) -> type:
-    """Build a Pydantic model from a JSON Schema for tool argument validation."""
-    from typing import Optional as Opt
-
-    fields = {}
-    required = set(schema.get("required", []))
-    for prop_name, prop_schema in schema.get("properties", {}).items():
-        py_type = _json_type_to_python(prop_schema)
-        default = prop_schema.get("default")
-
-        if prop_name not in required:
-            py_type = Opt[py_type]
-            if default is not None:
-                fields[prop_name] = (py_type, Field(default=default))
-            else:
-                fields[prop_name] = (py_type, None)
-        else:
-            fields[prop_name] = (py_type, ...)
-
-    model_name = f"{tool_name}_args".replace("-", "_")
-    return create_model(model_name, **fields)
+_TYPE_MAP = {"string": str, "integer": int, "number": float, "boolean": bool}
 
 
 def _validate_tool_args(tool_name: str, args: dict) -> tuple[bool, dict | str]:
-    """Validate tool arguments against the tool's JSON Schema via Pydantic.
+    """Validate tool arguments via a Pydantic model built on-the-fly from JSON Schema.
 
     Returns (True, validated_dict) on success, or (False, error_message) on failure.
     """
     schema = _tool_schema_map.get(tool_name)
     if not schema or not schema.get("properties"):
-        return True, args  # no schema to validate against
+        return True, args
 
     if tool_name not in _validator_cache:
-        try:
-            _validator_cache[tool_name] = _build_validator(tool_name, schema)
-        except Exception as e:
-            logger.warning("validator_build_failed", tool=tool_name, error=str(e))
-            return True, args  # can't build validator, pass through
+        required = set(schema.get("required", []))
+        fields: dict[str, tuple] = {}
+        for name, prop in schema["properties"].items():
+            py_type = _TYPE_MAP.get(prop.get("type", "string"), str)
+            if name in required:
+                fields[name] = (py_type, ...)
+            else:
+                fields[name] = (py_type, Field(default=prop.get("default")))
 
-    Validator = _validator_cache[tool_name]
+        _validator_cache[tool_name] = create_model(
+            tool_name.replace("-", "_") + "_args", **fields
+        )
+
     try:
-        validated = Validator(**args)
+        validated = _validator_cache[tool_name](**args)
         return True, validated.model_dump()
     except ValidationError as e:
         error_detail = e.errors(include_url=False)
         error_msg = f"工具 {tool_name} 参数校验失败，请修正后重试：\n"
         for err in error_detail:
-            loc = ".".join(str(l) for l in err["loc"])
-            error_msg += f"  - {loc}: {err['msg']}\n"
-        logger.info("tool_args_validation_failed", tool=tool_name, errors=error_detail, raw_args=str(args)[:200])
+            error_msg += f"  - {'.'.join(str(l) for l in err['loc'])}: {err['msg']}\n"
+        logger.info("tool_args_validation_failed", tool=tool_name, errors=error_detail)
         return False, error_msg.strip()
 
 
@@ -304,7 +265,7 @@ async def generate_answer(state: AgentState) -> dict:
 
                 assistant_msg = {
                     "role": "assistant",
-                    "content": msg.content or "",
+                    "content": msg.reasoning_content or "",
                     "tool_calls": [
                         {
                             "id": tc.id,
