@@ -78,6 +78,22 @@ async def classify_intent(state: AgentState) -> dict:
     last_msg = state.messages[-1]
     user_text = _get_msg_content(last_msg)
 
+    # Handle handoff confirmation button clicks before intent classification
+    # to prevent routing to handoff node when user chooses "continue"
+    if user_text in ["继续", "取消转接", "不需要转人工"]:
+        return {
+            "intent": IntentType.GENERAL_INQUIRY,
+            "intent_confidence": 1.0,
+            "pending_handoff": False,
+            "low_satisfaction_count": 0,
+        }
+
+    if user_text in ["转人工", "确认转人工"]:
+        return {
+            "intent": IntentType.HUMAN_HANDOFF,
+            "intent_confidence": 1.0,
+        }
+
     # Slot-filling detection: user is just providing data (phone, order ID, etc.)
     if _is_slot_filling(user_text, state):
         logger.info("slot_filling_detected", user_text=user_text[:30])
