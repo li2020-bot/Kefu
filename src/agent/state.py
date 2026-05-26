@@ -116,6 +116,8 @@ class AgentState(BaseModel):
     satisfaction_score: float | None = None
     needs_handoff: bool = False
     handoff_reason: str | None = None
+    pending_handoff: bool = False
+    pending_handoff_reason: str | None = None
     low_satisfaction_count: int = 0
 
     # Session metadata
