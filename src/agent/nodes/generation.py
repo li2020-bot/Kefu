@@ -328,6 +328,12 @@ async def generate_answer(state: AgentState) -> dict:
             # Normal text response
             answer = msg.content or ""
 
+            # Append handoff confirmation buttons if pending_handoff is set
+            pending_handoff = getattr(state, 'pending_handoff', False)
+            pending_handoff_reason = getattr(state, 'pending_handoff_reason', None)
+            if pending_handoff and pending_handoff_reason:
+                answer += f"\n\n---\n{pending_handoff_reason}\n[转人工] [继续]"
+
             logger.info("llm_response", preview=answer[:120])
 
             # Only persist the final answer to state, not intermediate tool_calls/tool results.
