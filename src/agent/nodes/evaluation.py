@@ -23,7 +23,7 @@ async def evaluate_satisfaction(state: AgentState) -> dict:
     this would use an LLM-based quality assessment.
     """
     if not state.messages:
-        return {"satisfaction_score": 5.0, "needs_handoff": False}
+        return {"satisfaction_score": 5.0, "needs_handoff": False, "pending_handoff": False}
 
     # Check last user message for dissatisfaction signals
     last_user_msg = None
@@ -33,7 +33,7 @@ async def evaluate_satisfaction(state: AgentState) -> dict:
             break
 
     if not last_user_msg:
-        return {"satisfaction_score": 5.0}
+        return {"satisfaction_score": 5.0, "pending_handoff": False}
 
     # Check for explicit handoff request
     if any(kw in last_user_msg for kw in ["转人工", "人工客服", "找经理", "找主管"]):
@@ -50,15 +50,22 @@ async def evaluate_satisfaction(state: AgentState) -> dict:
         new_low_count = state.low_satisfaction_count + 1
         needs_handoff = new_low_count >= settings.handoff_unsatisfied_threshold
 
+        if needs_handoff:
+            return {
+                "satisfaction_score": score,
+                "low_satisfaction_count": new_low_count,
+                "pending_handoff": True,
+                "pending_handoff_reason": f"连续 {new_low_count} 次表达不满，是否需要转接人工客服？",
+            }
+
         return {
             "satisfaction_score": score,
             "low_satisfaction_count": new_low_count,
-            "needs_handoff": needs_handoff,
-            "handoff_reason": f"Low satisfaction for {new_low_count} consecutive turns" if needs_handoff else None,
         }
 
     # Reset low satisfaction counter on positive interaction
     return {
         "satisfaction_score": 4.5,
         "low_satisfaction_count": 0,
+        "pending_handoff": False,
     }
