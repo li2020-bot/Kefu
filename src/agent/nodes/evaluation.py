@@ -61,6 +61,7 @@ async def evaluate_satisfaction(state: AgentState) -> dict:
         return {
             "satisfaction_score": score,
             "low_satisfaction_count": new_low_count,
+            "pending_handoff": False,
         }
 
     # Reset low satisfaction counter on positive interaction
