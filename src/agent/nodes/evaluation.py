@@ -32,6 +32,21 @@ async def evaluate_satisfaction(state: AgentState) -> dict:
             last_user_msg = _get_msg_content(msg)
             break
 
+    # Handle handoff confirmation button clicks
+    if last_user_msg in ["转人工", "确认转人工"]:
+        return {
+            "needs_handoff": True,
+            "handoff_reason": "User confirmed handoff via button",
+            "pending_handoff": False,
+            "low_satisfaction_count": 0,
+        }
+
+    if last_user_msg in ["继续", "取消转接", "不需要转人工"]:
+        return {
+            "pending_handoff": False,
+            "low_satisfaction_count": 0,
+        }
+
     if not last_user_msg:
         return {"satisfaction_score": 5.0, "pending_handoff": False}
 
