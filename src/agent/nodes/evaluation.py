@@ -41,6 +41,7 @@ async def evaluate_satisfaction(state: AgentState) -> dict:
             "satisfaction_score": 1.0,
             "needs_handoff": True,
             "handoff_reason": "User requested human agent",
+            "pending_handoff": False,
         }
 
     # Check for dissatisfaction keywords
