@@ -33,6 +33,8 @@ class ChatResponse(BaseModel):
     sources: list[str] = Field(default_factory=list)
     needs_handoff: bool = False
     handoff_reason: str | None = None
+    pending_handoff: bool = False
+    pending_handoff_reason: str | None = None
 
 
 @router.post("", response_model=ChatResponse)
@@ -94,6 +96,8 @@ async def chat(request: ChatRequest, tenant: str = Depends(verify_tenant)):
             sources=sources,
             needs_handoff=result.get("needs_handoff", False),
             handoff_reason=result.get("handoff_reason"),
+            pending_handoff=result.get("pending_handoff", False),
+            pending_handoff_reason=result.get("pending_handoff_reason"),
         )
     except Exception as e:
         logger.error("chat_error", session_id=session_id, error=str(e))
