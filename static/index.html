@@ -59,6 +59,26 @@
   .sources { margin-top: 8px; font-size: 12px; color: #888; }
   .source-tag { display: inline-block; background: #f0f2f5; padding: 2px 8px; border-radius: 4px; margin: 2px; }
 
+  /* Handoff buttons */
+  .handoff-buttons {
+    margin-top: 10px; display: flex; gap: 8px;
+  }
+  .handoff-btn {
+    padding: 6px 16px; border-radius: 6px; font-size: 13px;
+    cursor: pointer; border: none; transition: background .2s;
+  }
+  .handoff-btn.transfer {
+    background: #ff4d4f; color: #fff;
+  }
+  .handoff-btn.transfer:hover { background: #ff7875; }
+  .handoff-btn.continue {
+    background: #f0f2f5; color: #333; border: 1px solid #d9d9d9;
+  }
+  .handoff-btn.continue:hover { border-color: #1677ff; color: #1677ff; }
+  .handoff-reason {
+    margin-bottom: 8px; font-size: 13px; color: #666;
+  }
+
   /* Meta info */
   .meta { font-size: 11px; color: #aaa; margin-top: 4px; }
 
@@ -141,7 +161,7 @@ function scrollToBottom() {
   chatEl.scrollTop = chatEl.scrollHeight;
 }
 
-function addMessage(role, content, sources, meta) {
+function addMessage(role, content, sources, meta, handoffInfo) {
   const div = document.createElement('div');
   div.className = `msg ${role}`;
 
@@ -170,11 +190,44 @@ function addMessage(role, content, sources, meta) {
     body.appendChild(metaDiv);
   }
 
+  // Handoff confirmation buttons
+  if (handoffInfo && handoffInfo.pending_handoff) {
+    const reasonDiv = document.createElement('div');
+    reasonDiv.className = 'handoff-reason';
+    reasonDiv.textContent = handoffInfo.pending_handoff_reason || '是否需要转接人工客服？';
+    body.appendChild(reasonDiv);
+
+    const btnDiv = document.createElement('div');
+    btnDiv.className = 'handoff-buttons';
+
+    const transferBtn = document.createElement('button');
+    transferBtn.className = 'handoff-btn transfer';
+    transferBtn.textContent = '转人工';
+    transferBtn.onclick = () => handleHandoffChoice('转人工');
+    btnDiv.appendChild(transferBtn);
+
+    const continueBtn = document.createElement('button');
+    continueBtn.className = 'handoff-btn continue';
+    continueBtn.textContent = '继续';
+    continueBtn.onclick = () => handleHandoffChoice('继续');
+    btnDiv.appendChild(continueBtn);
+
+    body.appendChild(btnDiv);
+  }
+
   div.appendChild(avatar);
   div.appendChild(body);
   chatEl.appendChild(div);
   scrollToBottom();
   return div;
+}
+
+let pendingHandoffReason = null;
+
+async function handleHandoffChoice(choice) {
+  if (!choice || isLoading) return;
+  addMessage('user', choice, null, null);
+  await sendMessage(choice);
 }
 
 function addLoading() {
@@ -244,7 +297,10 @@ async function sendMessage(message) {
     if (data.skill) metaParts.push(`技能: ${data.skill}`);
     if (data.intent) metaParts.push(`意图: ${data.intent}`);
 
-    addMessage('assistant', data.answer, data.sources, metaParts.join(' | '));
+    addMessage('assistant', data.answer, data.sources, metaParts.join(' | '), {
+      pending_handoff: data.pending_handoff,
+      pending_handoff_reason: data.pending_handoff_reason,
+    });
 
     if (data.needs_handoff) {
       const reason = data.handoff_reason || '系统自动转接';
