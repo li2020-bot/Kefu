@@ -54,17 +54,21 @@ async def chat(request: ChatRequest, tenant: str = Depends(verify_tenant)):
 
     config = {"configurable": {"thread_id": session_id}}
 
+    # Only add base_system_prompt for new sessions (first message in conversation)
     try:
-        # Only pass the new user message — the checkpointer will merge it with
-        # the saved state. Do NOT pass a full AgentState with defaults, as that
-        # would overwrite active_skill, available_tools, etc. from the previous turn.
+        existing_state = await agent_graph.aget_state(config)
+        is_new_session = not existing_state.created_at  # If created_at is None/empty, it's a new session
+    except Exception:
+        is_new_session = True
+
+    messages_to_invoke = []
+    if is_new_session:
+        messages_to_invoke.append({"role": "system", "content": AgentState().base_system_prompt})
+    messages_to_invoke.append({"role": "user", "content": request.message})
+
+    try:
         result = await agent_graph.ainvoke(
-            {
-                "messages": [
-                    {"role": "system", "content": AgentState().base_system_prompt},
-                    {"role": "user", "content": request.message},
-                ]
-            },
+            {"messages": messages_to_invoke},
             config,
         )
 

@@ -237,7 +237,8 @@ async def generate_answer(state: AgentState) -> dict:
     # from skill_dispatch, fresh RAG context comes from the rag_msg below.
     conversation = _filter_conversation_messages(state.messages)
     llm_messages = _messages_to_dict(conversation)
-    llm_messages.insert(-1, rag_msg)
+    if state.retrieved_docs:
+        llm_messages.insert(-1, rag_msg)
 
     tools = state.available_tools if hasattr(state, 'available_tools') else []
     tool_call_count = state.tool_call_count if hasattr(state, 'tool_call_count') else 0

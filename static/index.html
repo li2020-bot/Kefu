@@ -335,8 +335,9 @@ inputEl.addEventListener('keydown', (e) => {
 });
 
 function newSession() {
-  sessionId = null;
   localStorage.removeItem('kefu_session_id');
+  sessionId = crypto.randomUUID();  // 立即生成新的，不复用
+  localStorage.setItem('kefu_session_id', sessionId);
   chatEl.innerHTML = `
     <div class="msg assistant">
       <div class="avatar">🤖</div>
