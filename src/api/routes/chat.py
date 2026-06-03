@@ -11,6 +11,7 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
 from src.agent.graph import agent_graph
+from src.agent.state import AgentState
 
 from src.api.middleware.auth import verify_tenant
 from src.core.security import PIIFilter, PromptInjectionGuard
@@ -58,7 +59,12 @@ async def chat(request: ChatRequest, tenant: str = Depends(verify_tenant)):
         # the saved state. Do NOT pass a full AgentState with defaults, as that
         # would overwrite active_skill, available_tools, etc. from the previous turn.
         result = await agent_graph.ainvoke(
-            {"messages": [{"role": "user", "content": request.message}]},
+            {
+                "messages": [
+                    {"role": "system", "content": AgentState().base_system_prompt},
+                    {"role": "user", "content": request.message},
+                ]
+            },
             config,
         )
 
@@ -116,7 +122,10 @@ async def chat_stream(session_id: str, message: str, tenant: str = Depends(verif
 
             # Only pass the new user message to avoid overwriting saved state fields
             async for event in agent_graph.astream_events(
-                {"messages": [{"role": "user", "content": message}]}, config, version="v2"
+                {"messages": [
+                    {"role": "system", "content": AgentState().base_system_prompt},
+                    {"role": "user", "content": message},
+                ]}, config, version="v2"
             ):
                 event_type = event.get("event", "")
 

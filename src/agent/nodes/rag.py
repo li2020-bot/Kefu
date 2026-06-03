@@ -26,7 +26,7 @@ async def retrieve_knowledge(state: AgentState) -> dict:
     # Keep existing retrieved_docs from the previous turn.
     if state.intent == IntentType.SLOT_FILLING:
         logger.info("rag_skipped_slot_filling")
-        return {}
+        return {"retrieved_docs": []}
 
     # Get the last USER message content as the search query,
     # skipping any system/assistant messages added by skill_dispatch etc.

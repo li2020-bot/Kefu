@@ -23,7 +23,7 @@ _MCP_SERVERS = [crm_mcp, order_mcp, ticket_mcp]
 
 
 def _build_enriched_prompt(skill_prompt: str, knowledge_bases: list[dict]) -> str:
-    """Append knowledge base info to the skill's system prompt."""
+    """Append knowledge base info to skill prompt."""
     prompt = skill_prompt
     if knowledge_bases:
         kb_lines = [
@@ -108,7 +108,10 @@ async def dispatch_skill(state: AgentState) -> dict:
     # Build enriched system prompt
     system_msg = {
         "role": "system",
-        "content": _build_enriched_prompt(skill.get_system_prompt(), skill.get_knowledge_bases()),
+        "content": _build_enriched_prompt(
+            skill.get_system_prompt(),
+            skill.get_knowledge_bases(),
+        ),
     }
 
     logger.info("skill_dispatched", skill=target_skill.value, tools_count=len(available_tools), namespaces=namespaces)

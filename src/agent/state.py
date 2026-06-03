@@ -126,4 +126,13 @@ class AgentState(BaseModel):
     session_id: str = ""
     turn_count: int = 0
 
+    # Unified customer service system prompt (prepended to all skill prompts)
+    base_system_prompt: str = (
+        "你是一个专业、耐心的客服助手，始终以客户满意为目标。"
+        "请用友好、亲切的语气与客户交流，善于倾听并准确理解客户需求。"
+        "回答时要简洁明了，控制在200字以内，涉及操作步骤时请分点列出。"
+        "对于无法解决的问题，主动建议转接人工客服。"
+        "严禁在回复中暴露内部代码、变量名、函数名或调试日志。"
+    )
+
     model_config = {"arbitrary_types_allowed": True}

@@ -152,21 +152,26 @@ def _filter_conversation_messages(messages: list) -> list:
     """Keep user messages, final assistant answers, and the current turn's system prompt.
 
     Removes:
-    - Old system prompts (keep only the last one, which is the current turn's skill prompt)
+    - Old system prompts (keep only the first one and the last one)
+      - First system message: base_system_prompt from chat entry
+      - Last system message: current turn's skill prompt
     - Tool call intermediate steps and tool results
     """
-    # Find the index of the last system message (current turn's skill prompt)
+    # Find the first and last system message
+    first_system_idx = -1
     last_system_idx = -1
     for i, msg in enumerate(messages):
         role = msg.get("role", "") if isinstance(msg, dict) else _get_msg_role(msg)
         if role == "system":
+            if first_system_idx == -1:
+                first_system_idx = i
             last_system_idx = i
 
     filtered = []
     for i, msg in enumerate(messages):
         if isinstance(msg, dict):
             role = msg.get("role", "")
-            if role == "system" and i != last_system_idx:
+            if role == "system" and i != first_system_idx and i != last_system_idx:
                 continue
             if role == "tool":
                 continue
@@ -175,7 +180,7 @@ def _filter_conversation_messages(messages: list) -> list:
             filtered.append(msg)
         else:
             role = _get_msg_role(msg)
-            if role == "system" and i != last_system_idx:
+            if role == "system" and i != first_system_idx and i != last_system_idx:
                 continue
             if role == "tool":
                 continue
@@ -249,7 +254,7 @@ async def generate_answer(state: AgentState) -> dict:
                 "model": settings.llm_model,
                 "messages": current_messages,
                 "api_key": settings.llm_api_key,
-                "temperature": 0,
+                "temperature": 0.3,
                 "base_url": settings.llm_base_url,
             }
             if tools:
