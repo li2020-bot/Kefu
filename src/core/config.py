@@ -21,7 +21,7 @@ try:
         postgres_port: int = 5432
         postgres_db: str = "kefu"
         postgres_user: str = "kefu"
-        postgres_password: str = "kefu123"
+        postgres_password: str = ""  # Set via POSTGRES_PASSWORD env var
 
         @property
         def postgres_url(self) -> str:
