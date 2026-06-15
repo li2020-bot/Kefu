@@ -4,6 +4,7 @@ import math
 import re
 from collections import Counter
 
+import jieba
 from src.core.logging import get_logger as _get_logger
 import logging; logger = _get_logger(__name__)
 from sqlalchemy import text
@@ -12,32 +13,15 @@ from src.core.config import settings
 
 
 def _tokenize(text: str) -> list[str]:
-    """Tokenize text into character bigrams and trigrams.
+    """Tokenize text using jieba word segmentation.
 
-    Works well for Chinese text without requiring a segmentation library.
-    Also extracts consecutive alphanumeric sequences as whole tokens.
+    Handles both Chinese and English text properly.
     """
-    tokens = []
-    # Extract alphanumeric/English words as whole tokens
-    cleaned = re.sub(r"[^\w\u4e00-\u9fff]", " ", text.lower())
-    for part in cleaned.split():
-        if re.search(r"[\u4e00-\u9fff]", part):
-            # Chinese text: use bigram and trigram
-            chars = list(part)
-            n = len(chars)
-            if n == 1:
-                tokens.append(chars[0])
-            elif n == 2:
-                tokens.append(part)
-                tokens.extend(chars)
-            else:
-                for i in range(n - 1):
-                    tokens.append(chars[i] + chars[i + 1])
-                for i in range(n - 2):
-                    tokens.append(chars[i] + chars[i + 1] + chars[i + 2])
-        else:
-            # English text: use whole word
-            tokens.append(part)
+    text = text.lower()
+    # jieba.cut returns a generator, convert to list
+    tokens = list(jieba.cut(text))
+    # Filter out empty strings and punctuation
+    tokens = [t for t in tokens if t and not re.match(r"^[^\w\u4e00-\u9fff]+$", t)]
     return tokens
 
 
