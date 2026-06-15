@@ -1,6 +1,8 @@
 #!/bin/bash
 # Git pre-push hook: 检查即将推送的提交中是否包含 api key
-# 用法: ./git_push_with_key_check.sh --verify
+# 用法:
+#   --verify    手动检查当前工作区
+#   (作为 hook) 检查将被推送的文件，exit 0 表示允许推送
 
 set -e
 
@@ -9,8 +11,20 @@ if [[ "$1" == "--verify" ]]; then
     VERIFY_MODE=true
 fi
 
-CHECK_FILES=$(git diff --cached --name-only | grep -E '\.(py|yaml|yml|json|env|txt|md|js|ts)$' || true)
-CHECK_FILES="$CHECK_FILES $(git diff HEAD --name-only | grep -E '\.(py|yaml|yml|json|env|txt|md|js|ts)$' || true)"
+# pre-push hook 接收: remote_name remote_url
+# 读取但不使用（hook 必须从 stdin 读取这些数据）
+if [[ "$VERIFY_MODE" != "true" ]]; then
+    while read -r local_ref local_sha remote_ref remote_sha; do
+        :
+    done
+fi
+
+# 获取将被检查的文件
+if [[ "$VERIFY_MODE" == "true" ]]; then
+    CHECK_FILES=$(git diff HEAD --name-only | grep -E '\.(py|yaml|yml|json|env|txt|md|js|ts)$' || true)
+else
+    CHECK_FILES=$(git diff --name-only "$remote_sha" HEAD | grep -E '\.(py|yaml|yml|json|env|txt|md|js|ts)$' || true)
+fi
 
 FOUND_KEYS=false
 for file in $CHECK_FILES; do
@@ -47,9 +61,7 @@ fi
 
 if [[ "$VERIFY_MODE" == "true" ]]; then
     echo "检查通过: 未发现 API key"
-    exit 0
 fi
 
-# 正常推送
-echo "检查通过，开始推送..."
-git push "$@"
+# hook 成功退出，git 会继续推送
+exit 0
